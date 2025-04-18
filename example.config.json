@@ -1,0 +1,8 @@
+{
+    "gcp": {
+        "project_id": "your-gcp-project-id",
+        "pubsub_topic": "your-pubsub-topic-name",
+        "service_account_key_path": "/path/to/your/service-account-key.json"
+    },
+    "sensor_base_dir": "/sys/bus/w1/devices/"
+}
