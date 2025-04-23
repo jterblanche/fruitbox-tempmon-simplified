@@ -457,6 +457,8 @@ def log_temperatures(device_folders: list[str], pubsub_client: Optional[pubsub_v
           and skips publishing.
     """
 
+    reading_timestamp = convert_unix_timestamp_to_bigquery_timestamp(time.time())
+
     for device_folder in device_folders:
         try:
             logger.debug(f"Reading temperature from device folder: {device_folder}")
@@ -470,7 +472,7 @@ def log_temperatures(device_folders: list[str], pubsub_client: Optional[pubsub_v
             logger.info(f"Sensor ID: {sensor_id}, Temperature: {temperature}°C")
             
             message = {
-                "timestamp": convert_unix_timestamp_to_bigquery_timestamp(time.time()),
+                "timestamp": reading_timestamp,
                 "sensor_id": sensor_id,
                 "reading": temperature
             }
