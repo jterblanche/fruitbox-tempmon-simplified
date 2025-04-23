@@ -212,7 +212,7 @@ def check_temperature_reading_validity(temperature: Optional[float]) -> bool:
         return False
     return True
     
-def create_pubsub_client(project_id, pubsub_topic):
+def create_pubsub_client(project_id, pubsub_topic, service_account_key_path=None):
     """
     Creates a Google Cloud Pub/Sub client and constructs the topic path.
     Args:
@@ -227,12 +227,21 @@ def create_pubsub_client(project_id, pubsub_topic):
         Exception: Logs and handles any exceptions that occur during the creation of the Pub/Sub client.
     """
 
-    if not project_id or not pubsub_topic:
-        logger.error("Project ID or Pub/Sub topic is missing.")
+    if not project_id:
+        logger.error("Cannot create Pub/Sub client. Project ID is missing.")
+        return None, None
+    
+    if not pubsub_topic:
+        logger.error("Cannot create Pub/Sub client. Pub/Sub topic is missing.")
+        return None, None
+    
+    if not service_account_key_path:
+        logger.error("Cannot create Pub/Sub client. Service account key path is missing.")
         return None, None
 
     try:
-        publisher = pubsub_v1.PublisherClient()
+        # Create a Pub/Sub client using the provided service account key path.
+        publisher = pubsub_v1.PublisherClient.from_service_account_json(service_account_key_path)
         topic_path = publisher.topic_path(project_id, pubsub_topic)
         return publisher, topic_path
     except Exception as e:
