@@ -12,6 +12,7 @@ CONFIG_DIR="/etc/templogger"
 CONFIG_FILE="$CONFIG_DIR/config.json"
 VENV_DIR="/opt/templogger-venv"
 REQUIREMENTS="requirements.txt"
+WORKDIR="/opt/templogger"
 
 # Check if the script is run as root
 if [ "$EUID" -ne 0 ]; then
@@ -51,8 +52,13 @@ if ! command -v pip3 &> /dev/null; then
     exit 1
 fi
 
-echo "==> 1. Creating config directory at $CONFIG_DIR"
+echo "==> 1.1 Creating config directory at $CONFIG_DIR"
 sudo mkdir -p "$CONFIG_DIR"
+
+echo "==> 1.2 Creating working directory at $WORKDIR"
+sudo mkdir -p "$WORKDIR"
+sudo chown "$USER":"$USER" "$WORKDIR"
+sudo chmod 755 "$WORKDIR"
 
 echo "==> 2. Copying $SCRIPT_NAME to /usr/local/bin/"
 sudo cp "$SCRIPT_NAME" /usr/local/bin/

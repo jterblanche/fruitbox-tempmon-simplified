@@ -556,7 +556,7 @@ def main():
         logger.info(f"Found {len(device_folders)} sensor device folders.")
 
     # Create a Pub/Sub client
-    pubsub_client, topic_path = create_pubsub_client(project_id, config['gcp']['pubsub_topic'])
+    pubsub_client, topic_path = create_pubsub_client(project_id, config['gcp']['pubsub_topic'], config['gcp']['service_account_key_path'])
     if not pubsub_client or not topic_path:
         logger.error("Failed to create Pub/Sub client. Exiting.")
         sys.exit(GENERAL_ERROR)
