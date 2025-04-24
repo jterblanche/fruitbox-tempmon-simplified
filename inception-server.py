@@ -146,6 +146,8 @@ class TCPHandler(socketserver.BaseRequestHandler):
                     if not data:
                         break
 
+                    logger.info(f"Received data: {data}")
+
                     dt = datetime.now(timezone.utc)
 
                     pubsub_data = {
@@ -179,10 +181,6 @@ class TCPHandler(socketserver.BaseRequestHandler):
         finally:
             self.request.close()
             logger.info(f"Connection closed for {client_ip}")
-            # Close the Pub/Sub client if it was created
-            if 'pubsub_client' in locals() and pubsub_client:
-                pubsub_client.close()
-                logger.info("Pub/Sub client closed.")
 
 def run_server():
     try:
@@ -231,8 +229,6 @@ def run_server():
             def signal_handler(sig, frame):
                 logger.info("Shutdown signal received, exiting...")
                 server.shutdown()
-                if pubsub_client:
-                    pubsub_client.close()
                 sys.exit(0)
             
             signal.signal(signal.SIGINT, signal_handler)
