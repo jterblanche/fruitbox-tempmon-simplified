@@ -5,7 +5,9 @@
 set -e
 
 SCRIPT_NAME="templogger.py"
+SCRIPT2_NAME="inception-server.py"
 SERVICE_NAME="templogger.service"
+SERVICE2_NAME="inception-server.service"
 TIMER_NAME="templogger.timer"
 CONFIG_EXAMPLE="example.config.json"
 CONFIG_DIR="/etc/templogger"
@@ -60,9 +62,13 @@ sudo mkdir -p "$WORKDIR"
 sudo chown "$USER":"$USER" "$WORKDIR"
 sudo chmod 755 "$WORKDIR"
 
-echo "==> 2. Copying $SCRIPT_NAME to /usr/local/bin/"
+echo "==> 2.1 Copying $SCRIPT_NAME to /usr/local/bin/"
 sudo cp "$SCRIPT_NAME" /usr/local/bin/
 sudo chmod +x /usr/local/bin/"$SCRIPT_NAME"
+
+echo "==> 2.2 Copying $SCRIPT2_NAME to /usr/local/bin/"
+sudo cp "$SCRIPT2_NAME" /usr/local/bin/
+sudo chmod +x /usr/local/bin/"$SCRIPT2_NAME"
 
 echo "==> 3. Copying $CONFIG_EXAMPLE to $CONFIG_FILE"
 sudo cp "$CONFIG_EXAMPLE" "$CONFIG_FILE"
@@ -76,9 +82,10 @@ echo "==> 5. Installing requirements into virtual environment"
 sudo "$VENV_DIR/bin/pip" install --upgrade pip
 sudo "$VENV_DIR/bin/pip" install -r "$REQUIREMENTS"
 
-echo "==> 6. Installing systemd service and timer"
+echo "==> 6. Installing systemd services and timer"
 sudo cp "$SERVICE_NAME" /etc/systemd/system/
 sudo cp "$TIMER_NAME" /etc/systemd/system/
+sudo cp "$SERVICE2_NAME" /etc/systemd/system/
 
 echo "==> 7. Reloading systemd daemon and enabling timer"
 sudo systemctl daemon-reload

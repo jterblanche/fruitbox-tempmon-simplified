@@ -1,0 +1,19 @@
+[Unit]
+Description=Inception to Pub/Sub Relay Server
+After=network.target
+
+[Service]
+Type=simple
+User=templogger         # Change to the user you want the service to run as
+Group=templogger        # Change to the group you want the service to run as
+WorkingDirectory=/opt/templogger   # Directory containing your script and config
+ExecStart=/opt/templogger-venv/bin/python3 /usr/local/bin/templogger.py
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+
+# Optional: Set up logging to journal/syslog
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

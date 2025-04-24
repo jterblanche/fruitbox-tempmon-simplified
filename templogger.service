@@ -4,5 +4,5 @@ After=network.target
 
 [Service]
 Type=oneshot
-WorkingDirectory=/path/to/your/script
-ExecStart=/opt/templogger-venv/bin/python /usr/local/bin/templogger.py
+WorkingDirectory=/opt/templogger
+ExecStart=/opt/templogger-venv/bin/python3 /usr/local/bin/templogger.py
