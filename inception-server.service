@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=templogger         # Change to the user you want the service to run as
-Group=templogger        # Change to the group you want the service to run as
+User=root         # Change to the user you want the service to run as
+Group=root        # Change to the group you want the service to run as
 WorkingDirectory=/opt/templogger   # Directory containing your script and config
 ExecStart=/opt/templogger-venv/bin/python3 /usr/local/bin/templogger.py
 Restart=on-failure
