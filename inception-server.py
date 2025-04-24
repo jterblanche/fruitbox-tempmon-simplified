@@ -243,9 +243,8 @@ def run_server():
             
             signal.signal(signal.SIGINT, signal_handler)
             signal.signal(signal.SIGTERM, signal_handler)
-            
-            server_thread = threading.Thread(target=server.serve_forever)
-            server_thread.start()
+
+            server.serve_forever()
             
     except Exception as e:
         logger.error(f"Server startup failed: {str(e)}")
