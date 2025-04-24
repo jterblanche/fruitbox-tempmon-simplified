@@ -4,6 +4,7 @@ import sys
 import os
 import json
 from datetime import datetime, timezone
+import threading
 from google.cloud import pubsub_v1
 import argparse
 import signal
@@ -238,7 +239,8 @@ def run_server():
             signal.signal(signal.SIGINT, signal_handler)
             signal.signal(signal.SIGTERM, signal_handler)
             
-            server.serve_forever()
+            server_thread = threading.Thread(target=server.serve_forever)
+            server_thread.start()
             
     except Exception as e:
         logger.error(f"Server startup failed: {str(e)}")
