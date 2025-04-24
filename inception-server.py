@@ -149,8 +149,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
                         data = self.request.recv(1024).strip()
                     # Catch timeout error
                     except socket.timeout:
-                        logger.warning(f"Timeout occurred for {client_ip}.")
-                        break
+                        continue  # Don't break, just keep waiting
                     
                     if not data:
                         logger.info("No data received, closing connection.")
