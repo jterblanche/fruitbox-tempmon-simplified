@@ -1,4 +1,5 @@
 import logging
+import socket
 import socketserver
 import sys
 import os
@@ -138,19 +139,23 @@ class TCPHandler(socketserver.BaseRequestHandler):
             topic = self.server.publisher_params['topic']
             timeout = self.server.publisher_params.get('timeout', 10)
             
+            self.request.settimeout(timeout)
+
             while True:
                 try:
-                    data = b''
-                    # Receive 1 byte of data in a loop. If we've not received any data for 10 seconds or we've received an EOL/EOF, break the loop.
-                    while True:
-                        self.request.settimeout(timeout)
-                        onebyte = self.request.recv(1)
-                        if not onebyte or onebyte == b'\n' or onebyte == b'\r\n':
-                            break
-                        else:
-                            # Append the byte to the buffer
-                            data += onebyte
+                    try:
+                        data = self.request.recv(1024).strip()
+                    # Catch timeout error
+                    except socket.timeout:
+                        logger.warning(f"Timeout occurred for {client_ip}.")
+                        break
+                    
+                    if not data:
+                        logger.info("No data received, closing connection.")
+                        break
 
+                    # Decode the data
+                    data = data.decode('utf-8')
                     logger.info(f"Received data: {data}")
 
                     dt = datetime.now(timezone.utc)
