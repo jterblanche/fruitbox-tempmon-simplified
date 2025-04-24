@@ -12,6 +12,8 @@ import signal
 
 CONFIG_FILE = "/etc/templogger/config.json"
 
+TOPIC = "inception-notifications"
+
 CONFIG_ERROR = 2
 GENERAL_ERROR = 1
 
@@ -219,7 +221,7 @@ def run_server():
         # Create PubSub client once at server startup
         pubsub_client, topic = create_pubsub_client(
             gcp_config.get('project_id'),
-            gcp_config.get('pubsub_topic'),
+            TOPIC,
             gcp_config.get('service_account_key_path')
         )
         
@@ -238,7 +240,8 @@ def run_server():
             # Set up signal handlers
             def signal_handler(sig, frame):
                 logger.info("Shutdown signal received, exiting...")
-                server.shutdown()
+                shutdown_thread = threading.Thread(target=server.shutdown)
+                shutdown_thread.start()
                 sys.exit(0)
             
             signal.signal(signal.SIGINT, signal_handler)
