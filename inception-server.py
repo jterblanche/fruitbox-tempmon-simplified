@@ -135,16 +135,20 @@ class TCPHandler(socketserver.BaseRequestHandler):
             # Initialize Pub/Sub client once per server instance
             pubsub_client = self.server.publisher_params['pubsub_client']
             topic = self.server.publisher_params['topic']
-            timeout = self.server.publisher_params.get('timeout', 30)
+            timeout = self.server.publisher_params.get('timeout', 10)
             
-            # Set socket timeout (in seconds)
-            self.request.settimeout(timeout)
-
             while True:
                 try:
-                    data = self.request.recv(1024).decode('utf-8')
-                    if not data:
-                        break
+                    data = b''
+                    # Receive 1 byte of data in a loop. If we've not received any data for 10 seconds or we've received an EOL/EOF, break the loop.
+                    while True:
+                        self.request.settimeout(timeout)
+                        onebyte = self.request.recv(1)
+                        if not onebyte or onebyte == b'\n' or onebyte == b'\r\n':
+                            break
+                        else:
+                            # Append the byte to the buffer
+                            data += onebyte
 
                     logger.info(f"Received data: {data}")
 
@@ -222,7 +226,7 @@ def run_server():
             server.publisher_params = {
                 'pubsub_client': pubsub_client,
                 'topic': topic,
-                'timeout': config.get('timeout', 30)  # Default to 30 seconds if not specified
+                'timeout': config.get('timeout', 10)  # Default to 10 seconds if not specified
             }
             
             # Set up signal handlers
